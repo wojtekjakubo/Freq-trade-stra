@@ -59,13 +59,7 @@ class SlowPotato(IStrategy):
     sell_profit_only = False
     ignore_roi_if_buy_signal = True
     
-     # Set unfilledtimeout to 24 hours, since our averages are based on 5 days and will change.
-    unfilledtimeout = {
-        'buy': 60 * 24, #1440 minutes
-        'sell': 60 * 24 #1440 minutes
-    }
-
-        # Optional order type mapping
+    # Optional order type mapping
     order_types = {
         'buy': 'market',
         'sell': 'market',
@@ -90,16 +84,15 @@ class SlowPotato(IStrategy):
         dataframe['ha_close'] = heikinashi['close']
         dataframe['ha_high'] = heikinashi['high']
         dataframe['ha_low'] = heikinashi['low']
-
-        # all "normal" indicators:
-        # e.g.
-        # dataframe['rsi'] = ta.RSI(dataframe)
-        return dataframe
-
-		ha_low = ha_low(dataframe, timeperiod=1440) # 5 days
+	# defining variables 
+	ha_low = ha_low(dataframe, timeperiod=1440) # 5 days
         ha_high = ha_high(dataframe, timeperiod=1440) # 5 days
         ha_average = ha_high + ha_low / 2
-        ha_spread = (ha_high/ha_low) - 1 	
+        ha_spread = (ha_high/ha_low) - 1 
+
+        return dataframe
+
+	
 		
     def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
