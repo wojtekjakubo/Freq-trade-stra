@@ -73,7 +73,7 @@ class SlowPotato(IStrategy):
     order_time_in_force = {
         'buy': 'gtc',
         'sell': 'gtc'
-        }
+    }
     # run "populate_indicators" only for new candle
     process_only_new_candles = False
     
