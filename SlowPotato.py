@@ -85,10 +85,9 @@ class SlowPotato(IStrategy):
         dataframe['ha_high'] = heikinashi['high']
         dataframe['ha_low'] = heikinashi['low']
 	# defining variables 
-	ha_low = ha_low(dataframe, timeperiod=1440) # 5 days
-        ha_high = ha_high(dataframe, timeperiod=1440) # 5 days
-        ha_average = ha_high + ha_low / 2
-        ha_spread = (ha_high/ha_low) - 1 
+	ha_avg_low = ha_low(dataframe, timeperiod=1440) # 5 days
+        ha_avg_high = ha_high(dataframe, timeperiod=1440) # 5 days
+        ha_spread = (ha_avg_high/ha_avg_low) - 1 
 
         return dataframe
 
@@ -102,7 +101,7 @@ class SlowPotato(IStrategy):
         dataframe.loc[
             (
                 (dataframe['ha_spread'] >= .05) & ## average spread is #% of profit
-                (dataframe['close'] <= ha_low) & ## current dataframe is below average low
+                (dataframe['close'] <= ha_avg_low) & ## current dataframe is below average low
                 (dataframe['volume'] > 0) # volume above zero
             )
         , 'buy'] = 1
@@ -115,7 +114,7 @@ class SlowPotato(IStrategy):
 
         dataframe.loc[
             (
-                (dataframe['open'] >= ha_high) & ## current dataframe is above average high
+                (dataframe['open'] >= ha_avg_high) & ## current dataframe is above average high
                 (dataframe['volume'] > 0) # volume above zero
             )
         , 'sell'] = 1
