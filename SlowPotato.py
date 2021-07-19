@@ -9,12 +9,10 @@
 ### fix variables not correctly defined **** bug ****
 ### find a faster/better way to average the High/low for 1 day data for 5 days
 
-
 # --- Do not remove these libs ---
 import numpy as np  # noqa
 import pandas as pd  # noqa
 from pandas import DataFrame
-
 from freqtrade.strategy.interface import IStrategy
 
 # --------------------------------
@@ -32,7 +30,6 @@ class SlowPotato(IStrategy):
     This strategy uses the averages for the last 5 days high/low and sets up buy and sell orders acordingly
     Currently developing and testing this strategy
     """
-
     minimal_roi = { #if you overide this it will sell once it reaches a certain ROI threshold rather than the sell logic
         "0":  99
     }
@@ -59,14 +56,13 @@ class SlowPotato(IStrategy):
         'stoploss': 'market',
         'stoploss_on_exchange': False
     }
-		
-		
-        
+	
     # Optional order time in force.
     order_time_in_force = {
         'buy': 'gtc',
         'sell': 'gtc'
     }
+	
     # run "populate_indicators" only for new candle
     process_only_new_candles = False
     
@@ -83,8 +79,6 @@ class SlowPotato(IStrategy):
         ha_spread = (ha_avg_high/ha_avg_low) - 1 
 
         return dataframe
-
-	
 		
     def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
