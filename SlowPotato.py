@@ -3,19 +3,12 @@
 
 # If you want to help with this small endevor please reach me via discord jadex#0557
 
-# If you want to show your support donations are always accepted 
-# BTC = 13PustEinvinjud3wCARGHqz34j3GAifjC
-# ETH (ERC20) = 0x1b2aaceff8e4475f28280186553c07286e7e3e53
-
-
-
 ## Suggestions and improvements always welcome.
 ### Version 0.1
 ###  to do list / things to be implemented:
 ### fix variables not correctly defined **** bug ****
-### sorting of pairs by profit spread
 ### find a faster/better way to average the High/low for 1 day data for 5 days
-### if a day passes after buying with no sell rerun average high based on 5 day average high
+
 
 # --- Do not remove these libs ---
 import numpy as np  # noqa
