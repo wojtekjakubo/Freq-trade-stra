@@ -42,10 +42,10 @@ class SlowPotato(IStrategy):
     """
 
     minimal_roi = { #if you overide this it will sell once it reaches a certain ROI threshold rather than the sell logic
-        "0":  .05
+        "0":  99
     }
     
-    stoploss = -0.10
+    stoploss = -0.99
     
     # Optimal timeframe for the strategy 
     timeframe = '5m'
@@ -56,8 +56,8 @@ class SlowPotato(IStrategy):
     trailing_stop_positive_offset = 0.03
     
     # Experimental settings (configuration will overide these if set)
-    use_sell_signal = False
-    sell_profit_only = False
+    use_sell_signal = True
+    sell_profit_only = True
     ignore_roi_if_buy_signal = True
     
     # Optional order type mapping
