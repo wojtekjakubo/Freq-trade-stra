@@ -37,26 +37,32 @@ logger = logging.getLogger(__name__)
 
 class SlowPotato(IStrategy):
     """
-    This strategy uses the averages for the last 5 days high/low and sets up buy and sell orders acordingly
+    This strategy uses the averages for the last 2 days high/low and sets up buy and sell orders acordingly
     Currently developing and testing this strategy
     """
 
-    minimal_roi = { #if you overide this it will sell once it reaches a certain ROI threshold rather than the sell logic
-        "0":  99
+     # ROI table:
+    minimal_roi = {
+        "0": 0.203,
+        "36": 0.069,
+        "78": 0.035,
+        "156": 0
     }
-    
-    stoploss = -0.99
+
+    # Stoploss:
+    stoploss = -0.171
+
     
     # Optimal timeframe for the strategy 
     timeframe = '5m'
     
     # trailing stoploss 
-    trailing_stop = True
+    trailing_stop = False
     trailing_stop_positive = 0.02
-    trailing_stop_positive_offset = 0.03
+    trailing_stop_positive_offset = 0.01
     
     # Experimental settings (configuration will overide these if set)
-    use_sell_signal = True
+    use_sell_signal = False
     sell_profit_only = True
     ignore_roi_if_buy_signal = True
     
@@ -83,13 +89,13 @@ class SlowPotato(IStrategy):
 
     def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
-        If close candle breaks lower or equal to average low for last 5 days buy it
+        If close candle breaks lower or equal to average low for last 1 days buy it
         """
         
         dataframe.loc[
             (
-                #(dataframe['high'].rolling(1440).mean() / dataframe['low'].rolling(1440).mean() >= 1.05) & ## average spread is #% of profit
-                (dataframe['low'] <= dataframe['low'].rolling(1440).mean()) & ## current dataframe is below average low
+                (dataframe['low'].rolling(288).mean() < dataframe['high'].rolling(288).mean()) & ## average is currently below high
+                (dataframe['low'] <= dataframe['low'].rolling(288).mean()) & ## current dataframe is below average low
                 (dataframe['volume'] > 0) # volume above zero
             )
         ,'buy'] = 1
@@ -97,13 +103,14 @@ class SlowPotato(IStrategy):
 
     def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
-        If open candle breaks higher or equal to average high for last 5 days sell it
+        If open candle breaks higher or equal to average high for last 1 days sell it
         """
 
         dataframe.loc[
             (
-                (dataframe['high'] >= dataframe['high'].rolling(1440).mean()) & ## current dataframe is above average high
+                (dataframe['high'].rolling(288).mean() > dataframe['low'].rolling(288).mean()) & ## average is currently above high
+                (dataframe['high'] >= dataframe['high'].rolling(288).mean()) & ## current dataframe is above average high
                 (dataframe['volume'] > 0) # volume above zero
             )
-        ,'sell'] = 1
+        ,'sell'] = 0
         return dataframe
