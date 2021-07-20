@@ -12,7 +12,7 @@
 ## Suggestions and improvements always welcome.
 ### Version 0.1
 ###  to do list / things to be implemented:
-### fix variables not correctly defined **** bug ****
+### Hyperopt not profitable currently
 ### sorting of pairs by profit spread
 ### find a faster/better way to average the High/low for 1 day data for 5 days
 ### if a day passes after buying with no sell rerun average high based on 5 day average high
@@ -30,7 +30,6 @@ import talib.abstract as ta
 import freqtrade.vendor.qtpylib.indicators as qtpylib
 from datetime import datetime
 from freqtrade.persistence import Trade
-from technical.indicators import accumulation_distribution
 from technical.util import resample_to_interval, resampled_merge
 
 import logging
@@ -46,20 +45,20 @@ class SlowPotato(IStrategy):
         "0":  .05
     }
     
-    stoploss = -0.08
+    stoploss = -0.10
     
     # Optimal timeframe for the strategy 
     timeframe = '5m'
     
     # trailing stoploss 
-    trailing_stop = False
+    trailing_stop = True
     trailing_stop_positive = 0.02
     trailing_stop_positive_offset = 0.03
     
     # Experimental settings (configuration will overide these if set)
-    use_sell_signal = True
-    sell_profit_only = True
-    ignore_roi_if_buy_signal = False
+    use_sell_signal = False
+    sell_profit_only = False
+    ignore_roi_if_buy_signal = True
     
     # Optional order type mapping
     order_types = {
@@ -89,11 +88,11 @@ class SlowPotato(IStrategy):
         
         dataframe.loc[
             (
-                (df['high'].rolling(5, min_periods=1440).mean() / df['low'].rolling(5m, min_periods=1440).mean() >= 1.08) & ## average spread is #% of profit
-                (dataframe['low'] <= df['low'].rolling(1440.mean()) & ## current dataframe is below average low
+                #(dataframe['high'].rolling(1440).mean() / dataframe['low'].rolling(1440).mean() >= 1.05) & ## average spread is #% of profit
+                (dataframe['low'] <= dataframe['low'].rolling(1440).mean()) & ## current dataframe is below average low
                 (dataframe['volume'] > 0) # volume above zero
             )
-        , 'buy'] = 1
+        ,'buy'] = 1
         return dataframe
 
     def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
@@ -103,8 +102,8 @@ class SlowPotato(IStrategy):
 
         dataframe.loc[
             (
-                (dataframe['high'] >= df['high'].rolling(5, min_periods=1440).mean()) & ## current dataframe is above average high
+                (dataframe['high'] >= dataframe['high'].rolling(1440).mean()) & ## current dataframe is above average high
                 (dataframe['volume'] > 0) # volume above zero
             )
-        , 'sell'] = 1
+        ,'sell'] = 1
         return dataframe
